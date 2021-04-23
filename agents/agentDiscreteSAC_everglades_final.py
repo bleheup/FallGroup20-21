@@ -48,7 +48,6 @@ class ReplayBuffer:
         self.mem_counter = 0
         self.state_memory = np.zeros( (self.mem_size, *input_shape) )
         self.new_state_memory = np.zeros( (self.mem_size, *input_shape) )
-        # Everglades uses a discrete action space, not continuous, so action_memory might need modification to work
         self.action_memory = np.zeros( (self.mem_size, 7, 2) )
         self.reward_memory = np.zeros( (self.mem_size) )
         self.terminal_memory = np.zeros(self.mem_size, dtype=np.bool)
@@ -93,8 +92,6 @@ class CriticNetwork(keras.Model):
         self.fc2 = Dense(self.fc2_dims, activation='relu', name='fc2')
         self.q = Dense(self.n_actions, activation=None, name='q')  # Q-value for each possible action 
     
-    # TODO DISCRETE: *(i) It is now more efficient to have the soft Q-function output the Q-value of each possible action, rather than simply the action provided as an input,
-    #                i.e. our Q function moves from (Q : S × A → R) to (Q : S → R^|A|).
     def call(self, state):
         action_value = self.fc1( state )
         action_value = self.fc2( action_value )
@@ -120,9 +117,6 @@ class ActorNetwork(keras.Model):
 
     # Pass in state thru first two layers of our network and store in prob
     # Then use prob to return probability distribution tensor
-    # TODO DISCRETE: *(ii) There is now no need for our policy to output the mean and covariance of our action distribution, instead it can directly output our action distribution.
-    #                The policy therefore changes from (π : S → R^(2|A|)) to (π : S → [0, 1]^|A|) where now we are applying a softmax function in the final layer of the
-    #                policy to ensure it outputs a valid probability distribution.
     def call(self, state):
         probs1 = self.fc1(state)
         probs2 = self.fc2(probs1)
@@ -160,7 +154,7 @@ class ActorNetwork(keras.Model):
 
 
 class AgentDiscreteSAC(Player):
-    # Two learning rates: alpha for actor network, beta for value/critic network
+    # Two learning rates: alpha for actor network, beta for critic network
     def __init__(self, lr_alpha=0.0003, lr_beta=0.0015, input_dims=[INPUT_SPACE], n_actions=NUM_ACTIONS, env=None, gamma=0.99, max_size=1000000, tau=0.0025,
                  layer1_size=BATCH_SIZE, layer2_size=BATCH_SIZE, batch_size=BATCH_SIZE, temperature=0.95, target_entropy=0.98*(np.log(NUM_ACTIONS)),
                  action_space=None, player_num=None, map_name=None):
@@ -172,10 +166,8 @@ class AgentDiscreteSAC(Player):
         self.n_actions = n_actions
         self.env = env
         
-        # Temperature not yet implemented, so ignore this for now
-        # (iv) Similarly, we can make the same change as (iii) to our calculation of the temperature loss to also reduce the variance of that estimate.
         self.alpha = temperature
-        self.target_entropy = target_entropy
+        self.target_entropy = target_entropy  # Temperature not yet implemented, so ignore this for now
 
         if load_prev_model:
             self.load(filepath=PREV_MODEL_PATH)
