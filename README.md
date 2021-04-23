@@ -1,4 +1,4 @@
-# Everglades
+# Everglades — Reinforcement Learning Battle Bots
 ## UCF Senior Design Project Team Gold
 ## Fall 2020 - Spring 2021
 
