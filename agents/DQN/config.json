@@ -1,0 +1,41 @@
+{
+  "environment": {
+    "env_name": "everglades-v0",
+    "config_dir": "../../config/",
+    "map_file": "DemoMap.json",
+    "setup_file": "GameSetup.json",
+    "unit_file": "UnitDefinitions.json",
+    "env_output_dir": "../../game_telemetry"
+  },
+  "exploration": {
+    "epsilon_start": 1,
+    "epsilon_final": 0.01,
+    "epsilon_decay": 16000
+  },
+  "training": {
+    "target_update_freq": 1500,
+    "start_learning": 512,
+    "learning_rate": 0.0001,
+    "max_steps": 10000000,
+    "max_episodes": 500
+  },
+  "memory_replay": {
+    "capacity": 8192,
+    "batch_size": 16
+  },
+  "model": {
+    "temporal_difference_target": "mean",
+    "exploration": "Eps",
+    "architecture": "Dueling",
+    "multi_steps": 0,
+    "PER": true,
+    "gamma": 0.95,
+    "hidden_dim": 128
+  },
+  "output": {
+    "save_update_freq": 20,
+    "directory": "double resume train no shape",
+    "dpi": 72
+  },
+  "device": "cuda:0"
+}
