@@ -1,0 +1,38 @@
+{
+  "environment": {
+    "env_name": "everglades-v0",
+    "config_dir": "config/",
+    "map_file": "DemoMap.json",
+    "setup_file": "GameSetup.json",
+    "unit_file": "UnitDefinitions.json",
+    "env_output_dir": "../../game_telemetry"
+  },
+  "exploration": {
+    "epsilon_start": 1,
+    "epsilon_final": 0.01,
+    "epsilon_decay": 80000
+  },
+  "training": {
+    "target_update_freq": 3000,
+    "start_learning": 200,
+    "learning_rate": 0.0001,
+    "max_steps": 10000000,
+    "max_episodes": 25000
+  },
+  "memory_replay": {
+    "capacity": 131072,
+    "batch_size": 128
+  },
+  "model": {
+    "temporal_difference_target": "mean",
+    "exploration": "Noisy",
+    "gamma": 0.99,
+    "hidden_dim": 128
+  },
+  "output": {
+    "save_update_freq": 20,
+    "directory": "Mean",
+    "dpi": 72
+  },
+  "device": "cuda:0"
+}
